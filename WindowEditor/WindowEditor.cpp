@@ -1,8 +1,12 @@
 ﻿// WindowEditor.cpp : 애플리케이션에 대한 진입점을 정의합니다.
-//
+
 
 #include "framework.h"
 #include "WindowEditor.h"
+
+//#pragma comment (lib,"..\\x64\\Debug\\DorongEngine_Win.lib")
+#include "..\\DorongEngine_Source\\Dorong_Application.h"
+
 
 #define MAX_LOADSTRING 100
 
@@ -17,7 +21,7 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, //얘는 핸들
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
@@ -42,7 +46,32 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    // 기본 메시지 루프입니다:
+    
+
+    //PeekMessage : 메세지 유무와 상관없이 메세지 큐에  함수가 리턴된다.
+    //              리턴값이 true면 메세지O false면 X라고 알려줌.
+    while (true)
+    {
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+        {
+            if (msg.message == WM_QUIT)
+                break;
+            if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+        }
+        else
+        {
+            //메세지가 없을경우 여기서 처리
+            //게임 로직이 들어감.
+        }
+    }
+    //return을 만나 종료되지 않고 창이 계속 실행되도록 메세지루프
+    //GetMessage(&msg, nullptr, 0, 0)
+    //프로세스에서 발생한 메세지를 메세지 큐에서 가져오는 함수
+    //메세지 큐에 아무것도 없다면 아무 메세지도 가져오지 않는다.(게임에 부적합)
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -56,11 +85,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 }
 
 
-
-//
-//  함수: MyRegisterClass()
-//
-//  용도: 창 클래스를 등록합니다.
+//  용도: 창 클래스를 등록합니다. 아이콘 커서 색, 스타일 등등의 정보를 담고있다.
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
@@ -99,6 +124,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+   //크리에이트 윈도우 여러번 호출하면 윈도우 창도 여러개!
 
    if (!hWnd)
    {
@@ -121,7 +147,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)//메세지 스위치문으로 받아서 분기에 따라 명령 처리
 {
     switch (message)
     {
@@ -146,7 +172,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
+            //DC는 화면 출력에 필요한 모든 정보를 가진 데이터 구조체임
+            // GDI 모듈이 관리한다.
+            // 폰트,선의 굵기? 색상
+            // 화면 출력에 필요한 모든 경우는 DC를 통해 진행한다(WinApi에서는)
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+
+            HBRUSH brush = CreateSolidBrush(RGB(0, 0, 255));
+            //파랑브러쉬 선택. 그리고 함수의 반환값은 원래 사용하던 흰색배경인듯.
+            HBRUSH oldbrush = (HBRUSH)SelectObject(hdc, brush);//디폴트 흰색배경을 찾아갈 수 있도록 메모리로 남겨놓는것.
+
+            Rectangle(hdc, 100, 100, 200, 200);
+            //다시 dc에 흰색배경 선택.
+            SelectObject(hdc, oldbrush);
+            DeleteObject(brush);//위에 동적할당한 녀석들 삭제해줘야 메세지 루프반복마다 메모리가 쌓이지 않는다.
+
+
+            HPEN redPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
+            HPEN oldPen = (HPEN)SelectObject(hdc, redPen);//디폴트 흰색배경을 찾아갈 수 있도록 메모리로 남겨놓는것.
+           
+            Ellipse(hdc, 200, 200, 300, 300);
+            
+            SelectObject(hdc, oldPen);
+            DeleteObject(redPen);
+
+            //자주 사용되는 GDI오브젝트를 스톡오브젝트 로 미리 만들어 둔게 있어서 보통 위처럼 Create로 생성하고 다시 삭제하는 과정없이 SelectObject만 사용해서 바꿔쓸 수 있다.
+            HBRUSH Greybrush = (HBRUSH)GetStockObject(GRAY_BRUSH);
+            oldbrush = (HBRUSH)SelectObject(hdc, Greybrush);
+            Rectangle(hdc, 400, 200, 500, 300);
+            SelectObject(hdc, oldbrush);
+
+
             EndPaint(hWnd, &ps);
         }
         break;
