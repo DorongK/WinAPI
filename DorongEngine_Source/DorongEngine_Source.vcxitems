@@ -16,10 +16,17 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CommonInclude.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Dorong_Application.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IRender.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)rongGameObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)rongInput.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)rongPlayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)rongPlayer2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Dorong_Application.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)rongGameObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)rongInput.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)rongPlayer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)rongPlayer2.cpp" />
   </ItemGroup>
 </Project>

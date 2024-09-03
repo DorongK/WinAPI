@@ -1,6 +1,7 @@
 #pragma once
 #include "CommonInclude.h"
-#include "rongGameObject.h"
+#include "rongPlayer.h"
+#include "rongPlayer2.h"
 
 namespace rong
 {
@@ -20,8 +21,7 @@ namespace rong
 		HWND mHwnd;
 		HDC mHdc;
 
-		GameObject mPlayer;
-		
-
+		Player mPlayer;
+		Player2 mPlayer2;
 	};
 }
