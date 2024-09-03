@@ -1,12 +1,10 @@
-﻿// WindowEditor.cpp : 애플리케이션에 대한 진입점을 정의합니다.
-
-
-#include "framework.h"
+﻿#include "framework.h"
 #include "WindowEditor.h"
 
 //#pragma comment (lib,"..\\x64\\Debug\\DorongEngine_Win.lib")
 #include "..\\DorongEngine_Source\\Dorong_Application.h"
 
+rong::Application application;
 
 #define MAX_LOADSTRING 100
 
@@ -45,9 +43,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, //얘는 핸들
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINDOWEDITOR));
 
     MSG msg;
-
     
-
     //PeekMessage : 메세지 유무와 상관없이 메세지 큐에  함수가 리턴된다.
     //              리턴값이 true면 메세지O false면 X라고 알려줌.
     while (true)
@@ -66,6 +62,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, //얘는 핸들
         {
             //메세지가 없을경우 여기서 처리
             //게임 로직이 들어감.
+            application.Run();
         }
     }
     //return을 만나 종료되지 않고 창이 계속 실행되도록 메세지루프
@@ -80,7 +77,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, //얘는 핸들
             DispatchMessage(&msg);
         }
     }
-
     return (int) msg.wParam;
 }
 
@@ -107,7 +103,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
     return RegisterClassExW(&wcex);
 }
-
 //
 //   함수: InitInstance(HINSTANCE, int)
 //
@@ -125,19 +120,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
    //크리에이트 윈도우 여러번 호출하면 윈도우 창도 여러개!
-
+   application.Initialize(hWnd);//핸들 자료형이 포인터라 복사가 아니라 주소가 넘어감.
    if (!hWnd)
    {
       return FALSE;
    }
-
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
-
    return TRUE;
 }
-
-//
 //  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
 //  용도: 주 창의 메시지를 처리합니다.
@@ -146,7 +137,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_PAINT    - 주 창을 그립니다.
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
-//
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)//메세지 스위치문으로 받아서 분기에 따라 명령 처리
 {
     switch (message)
@@ -177,33 +168,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)/
             // 폰트,선의 굵기? 색상
             // 화면 출력에 필요한 모든 경우는 DC를 통해 진행한다(WinApi에서는)
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-
-            HBRUSH brush = CreateSolidBrush(RGB(0, 0, 255));
-            //파랑브러쉬 선택. 그리고 함수의 반환값은 원래 사용하던 흰색배경인듯.
-            HBRUSH oldbrush = (HBRUSH)SelectObject(hdc, brush);//디폴트 흰색배경을 찾아갈 수 있도록 메모리로 남겨놓는것.
-
-            Rectangle(hdc, 100, 100, 200, 200);
-            //다시 dc에 흰색배경 선택.
-            SelectObject(hdc, oldbrush);
-            DeleteObject(brush);//위에 동적할당한 녀석들 삭제해줘야 메세지 루프반복마다 메모리가 쌓이지 않는다.
-
-
-            HPEN redPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
-            HPEN oldPen = (HPEN)SelectObject(hdc, redPen);//디폴트 흰색배경을 찾아갈 수 있도록 메모리로 남겨놓는것.
-           
-            Ellipse(hdc, 200, 200, 300, 300);
-            
-            SelectObject(hdc, oldPen);
-            DeleteObject(redPen);
-
-            //자주 사용되는 GDI오브젝트를 스톡오브젝트 로 미리 만들어 둔게 있어서 보통 위처럼 Create로 생성하고 다시 삭제하는 과정없이 SelectObject만 사용해서 바꿔쓸 수 있다.
-            HBRUSH Greybrush = (HBRUSH)GetStockObject(GRAY_BRUSH);
-            oldbrush = (HBRUSH)SelectObject(hdc, Greybrush);
-            Rectangle(hdc, 400, 200, 500, 300);
-            SelectObject(hdc, oldbrush);
-
-
             EndPaint(hWnd, &ps);
+
         }
         break;
     case WM_DESTROY:
