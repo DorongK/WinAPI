@@ -21,6 +21,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)rongInput.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)rongPlayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)rongPlayer2.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)rongTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Dorong_Application.cpp" />
@@ -28,5 +29,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)rongInput.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)rongPlayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)rongPlayer2.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)rongTime.cpp" />
   </ItemGroup>
 </Project>

@@ -117,10 +117,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
+   const UINT width = 1600;
+   const UINT height = 900;
+
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
    //크리에이트 윈도우 여러번 호출하면 윈도우 창도 여러개!
-   application.Initialize(hWnd);//핸들 자료형이 포인터라 복사가 아니라 주소가 넘어감.
+   application.Initialize(hWnd,width,height);//핸들 자료형이 포인터라 복사가 아니라 주소가 넘어감.
    if (!hWnd)
    {
       return FALSE;
